@@ -18,46 +18,10 @@ BudgetTracker/
 │ │ │── app-main/ # main budgeting app (after login)
 │ │ │── app-access/ # authentication / login app
 
----
-
-## 🚀 Progress by Day
-
-### **Day 1 – Project Setup**
-- Created GitHub repo  
-- Added `.gitignore` (VS template)  
-- Added `README.md` (description, roadmap, license)  
-- Decided repo structure (`BudgetTracker.Api`, `BudgetTracker.Dal`, `budget-tracker-frontend`)  
-- Angular multi-app setup (`app-access`, `app-main`)  
-- **Tech choices:**  
-  - Backend: ASP.NET Core 8 Web API  
-  - Database: PostgreSQL + Dapper  
-  - Frontend: Angular 16+ with SCSS  
-  - Deployment: Angular served by ASP.NET static files  
-
----
-
-### **Day 2 – Database Design**
-- Designed schema: `users`, `user_profiles`, `roles`, `user_roles`  
-- **Conventions:**  
-  - `id BIGSERIAL PRIMARY KEY`  
-  - Audit fields (`created_by`, `created_date`, etc.)  
-  - Foreign keys with clear naming (`fk_user_profiles_users`)  
-- Decided to use **BCrypt** for password hashing  
-- Inserted initial **Admin record** via script (`DataChanges.sql`)  
-- Added `BudgetTracker.Database/SchemaChanges` & `DataChanges` folders  
-- Created `SchemaChanges.sql` & `DataChanges.sql`  
-
----
-
-### **Day 3 (Planned) – Auth + Integration**
-- Configure Angular build output into `.NET wwwroot`  
-- Add build scripts with `concurrently`  
-- Implement `/api/auth/login` (JWT + role claims)  
-- Configure ASP.NET Core JWT auth (`AddAuthentication().AddJwtBearer`)  
-- Add `[Authorize]` and `[Authorize(Roles="...")]` to sample endpoints  
-- Angular `app-access`: login form → call API → store token → redirect to `app-main`  
-- Angular `app-main`: check token → fetch profile from protected API  
-- Add Angular `HttpInterceptor` to attach JWT + handle 401 errors  
-- (Optional) Role-based route guards in Angular  
-
----
+| Day       | Work Done / Planned                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Day 0** | **Tech Stack & Architecture Decisions**<br>• **Backend**: ASP.NET Core 8 Web API<br>• **Database**: PostgreSQL + Dapper ORM<br>• **Frontend**: Angular 20 (multi-app workspace, SCSS styling)<br>• **Deployment**: Docker (target, later phase)<br><br>**Architecture**<br>• Clean separation:<br> - API Layer (`BudgetTracker.Api`)<br> - Data Access Layer (`BudgetTracker.Dal`)<br> - Database scripts (`BudgetTracker.Database` → `SchemaChanges/`, `DataChanges/`)<br> - Angular frontend (`budget-tracker-frontend` → `app-access`, `app-main`)<br>• Database conventions: `BIGSERIAL` PKs, audit fields, explicit FK naming                                                                                                                                                                                                                                                                                                                                                                                     |
+| **Day 1** | **Repo & Project Setup**<br>• Created **GitHub repo** `budget-tracker`<br>• Added **`.gitignore`** (VS template)<br>• Added **`README.md`** (description, roadmap, license)<br><br>**Backend Solution Setup**<br>• Created solution `BudgetTracker` with projects:<br> - `BudgetTracker.Api` → API Layer<br> - `BudgetTracker.Dal` → Data Access Layer<br> - `BudgetTracker.Database` → DB scripts (`SchemaChanges/`, `DataChanges/`)<br><br>**Frontend Workspace Setup**<br>• Created Angular **multi-app workspace** `budget-tracker-frontend` with apps:<br> - `app-access` → login/authentication UI<br> - `app-main` → main budgeting app (post-login)                                                                                                                                                                                                                                                                                                                                                            |
+| **Day 2** | **Database Setup**<br>• Tables created: `users`, `user_profiles`, `roles`, `user_roles`<br>• Conventions:<br> - PKs: `BIGSERIAL`<br> - Audit fields: `created_at`, `updated_at`<br> - Explicit FK naming (`fk_user_roles_user_id`)<br><br>**Seeding**<br>• Initial **Admin user + Admin role** seeded via SQL script (`DataChanges/`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| **Day 3** | **Angular + .NET Integration**<br>• **Kept default Angular `dist/` output structure** (each app builds to its own subfolder under `dist/`).<br>• Wrote **extension method** in .NET to serve Angular apps dynamically:<br> - `/access/` → `dist/app-access/index.html`<br> - `/main/` → `dist/app-main/index.html`<br>• Allowed serving both apps under same ASP.NET Core server without copying to `wwwroot`.<br><br>**Build Automation**<br>• Installed **`concurrently`** → added script to build **both Angular apps (`app-access`, `app-main`) in parallel**.<br><br>**Angular Config Fixes**<br>• Updated `angular.json`:<br> - Ensured correct `outputPath` (`dist/app-access`, `dist/app-main`).<br> - Added **`baseHref`** (`/access/`, `/main/`) so JS/CSS assets resolve correctly.<br><br>**Verification**<br>• Verified `/access/` and `/main/` returned their respective `index.html`.<br>• Confirmed static assets (`main.js`, `polyfills.js`, `styles.css`) load successfully with correct base paths. |
+| **Day 4** | **Planned (Priority-Ordered)**<br>1️⃣ **Authentication & Security**<br>• Implement **JWT authentication** in ASP.NET Core<br>• Store JWT in **localStorage** (frontend)<br>• Configure `[Authorize(Roles="...")]` for role-based authorization<br>• Hash user passwords using **BCrypt**<br><br>2️⃣ **API Response Standardization**<br>• Create global response wrapper:<br>`{ "success": true, "data": {}, "errors": [] }`<br>• Apply to all API endpoints<br><br>3️⃣ **Frontend Auth Wiring**<br>• Add login form in `app-access`<br>• Connect login → JWT API<br>• Implement token persistence + auto-attach to API requests<br><br>4️⃣ **Testing & Validation**<br>• Verify login flow end-to-end<br>• Test unauthorized vs authorized routes<br>• Ensure roles (Admin vs User) enforced correctly                                                                                                                                                                                                                |
